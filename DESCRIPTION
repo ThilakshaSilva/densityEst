@@ -1,8 +1,8 @@
 Package: densityEst
-Title: What the Package Does (one line, title case)
+Title: It estimates a time series of density functions using logspline approach.
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Thilaksha", "Silva", email = "Thilaksha.Silva@monash.edu", role = c("aut", "cre"))
+Description: This package considers the problem of estimating a time series of density functions. A data set comprising many observations is recorded at each time period, and the associated probability density function is to be estimated for each time period. The principal motivation of this package arises due to the non-existence of previous studies on nonparametric estimation of a time series of densities, taking account of the time ordering of the densities. Previous studies ignored the time ordering of the densities and estimated the densities independently for every particular year, ignoring all other years. This package will address this issue by nonparametrically estimating a time series of density functions using logspline approach considering the time ordering of the densities.
 Depends: R (>= 3.4.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
