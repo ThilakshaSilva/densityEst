@@ -1,8 +1,9 @@
-#' @title Density estimation using logspline approach
+#' @title Plotting density estimation using logspline approach
 #' @description  It nonparametrically estimates a time series of density functions using logspline approach considering the time ordering of the densities.
-#' @param final A list of outputs return from densityESt function
+#' @param final A list of outputs returns from densityEst function
 #' @export
-plots <- function(final){
+plots <- function(final)
+{
   y <- final$y
   den <- final$z
   optp <- final$optp
@@ -32,10 +33,6 @@ plots <- function(final){
   a$z <- t(den[1:nxmargin,])
   graphics::par(mfrow=c(1,1))
   hdrcde::plot.cde(a,expand=0.3,xlab="Year",col="dodgerblue")
-
 }
-
-
-
 
 

@@ -1,8 +1,3 @@
-#' @importFrom crs gsl.bs
-#' @import optimx
-#' @import foreach
-#' @import doParallel
-
 "basis" <- function(y,t,d,e=TRUE)
 {
   terms <- matrix(NA,length(y),length(t))
@@ -404,7 +399,6 @@
 
   ### Starting values
   i = 0
-
   intpp <- intpar(y,knotsy)
   intp <- intpp$intp
   b1 <- intpp$b1                           #b1 <- 1/firstder(y,knotsy)[1,1]
@@ -544,7 +538,7 @@
 #' @param K number of initial number of knots
 #' @param nymargin desired length of the seqence
 #' @param log Does the logarithmic transformation apply to data? Default is TRUE.
-#' @param p A logical argument for plot
+#' @param graphics A logical argument for plots
 #' @export
 #' @examples
 #' l <- 20
@@ -556,7 +550,7 @@
 #' x <- c(1:l)
 #' densityEst(y,x)
 
-"densityEst" <- function(y,x,ymargin,lbound,ubound,K,nymargin=1000,log=TRUE,p=TRUE)
+"densityEst" <- function(y,x,ymargin,lbound,ubound,K,nymargin=1000,log=TRUE,graphics=TRUE)
 {
   if(missing(y))
     stop("You must provide y")
@@ -700,25 +694,25 @@
   #Original y values
   y <- lapply(1:nxmargin, function(X) exp(y[[X]]))
 
-  bestfit <- list()
-  bestfit$y <- y
-  bestfit$z <- z
-  bestfit$optp <- optp
-  bestfit$basisy <- basisy
-  bestfit$optimalknots <- optimalknots
-  bestfit$additionknots <- additionknots
-  bestfit$initialknots <- initialknots
-  bestfit$ymargin <- expymargin
-  bestfit$xmargin <- xmargin
-  bestfit$nymargin <- nymargin
-  bestfit$nxmargin <- nxmargin
-  bestfit$lowerbound <- exp(lbound)
-  bestfit$upperbound <- exp(ubound)
-  bestfit$delta <- delta
+  density <- list()
+  density$y <- y
+  density$z <- z
+  density$optp <- optp
+  density$basisy <- basisy
+  density$optimalknots <- optimalknots
+  density$additionknots <- additionknots
+  density$initialknots <- initialknots
+  density$ymargin <- expymargin
+  density$xmargin <- xmargin
+  density$nymargin <- nymargin
+  density$nxmargin <- nxmargin
+  density$lowerbound <- exp(lbound)
+  density$upperbound <- exp(ubound)
+  density$delta <- delta
 
-  if(p)  plots(bestfit)
+  if(graphics)  plots(density)
 
-  return(bestfit)
+  return(density)
 }
 
 

@@ -2,12 +2,12 @@
 % Please edit documentation in R/Plots.R
 \name{plots}
 \alias{plots}
-\title{Density estimation using logspline approach}
+\title{Plotting density estimation using logspline approach}
 \usage{
 plots(final)
 }
 \arguments{
-\item{final}{A list of outputs return from densityESt function}
+\item{final}{A list of outputs returns from densityEst function}
 }
 \description{
 It nonparametrically estimates a time series of density functions using logspline approach considering the time ordering of the densities.

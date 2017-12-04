@@ -5,7 +5,7 @@
 \title{Density estimation using logspline approach}
 \usage{
 densityEst(y, x, ymargin, lbound, ubound, K, nymargin = 1000, log = TRUE,
-  p = TRUE)
+  graphics = TRUE)
 }
 \arguments{
 \item{y}{a time series of data}
@@ -24,7 +24,7 @@ densityEst(y, x, ymargin, lbound, ubound, K, nymargin = 1000, log = TRUE,
 
 \item{log}{Does the logarithmic transformation apply to data? Default is TRUE.}
 
-\item{p}{A logical argument for plot}
+\item{graphics}{A logical argument for plots}
 }
 \description{
 It nonparametrically estimates a time series of density functions using logspline approach considering the time ordering of the densities.
