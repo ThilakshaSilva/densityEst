@@ -3,13 +3,6 @@
 #' @import foreach
 #' @import doParallel
 
-"para" <- function(){
-  n <- parallel::detectCores()
-  return(n)
-}
-
-
-
 "basis" <- function(y,t,d,e=TRUE)
 {
   terms <- matrix(NA,length(y),length(t))
@@ -284,7 +277,7 @@
 {
   zb <- basisy%*%intp
   cb <- log(sum(exp(zb))*delta)
-  z <- approx(ymargin,zb-cb,y)$y        #log density of log income
+  z <- stats::approx(ymargin,zb-cb,y)$y        #log density of log income
   return(sum(z))
 }
 
@@ -292,8 +285,9 @@
 ### Choosing optimal parameters
 "choosepar" <- function(b1,intp,y,basisy,ymargin,delta,K)
 {
+
   b <- optimx::optimx(intp,lik,method="nlminb",control=list(maximize=TRUE),upper=c(b1,rep(Inf,K-3),-0.1),y=y,basisy=basisy,ymargin=ymargin,delta=delta) #Calls lik function and after repeating provide maximum likelihood
-  return(list(par=as.vector(coef(b)),value=b$value))     #Maximixe the optimx function by fnscale=-1 and returns 'length(knots)+1' number of best set of coefficients
+  return(list(par=as.vector(stats::coef(b)),value=b$value))     #Maximixe the optimx function by fnscale=-1 and returns 'length(knots)+1' number of best set of coefficients
 }
 
 
@@ -367,11 +361,12 @@
 
 ###BIC for each dataset with different initial parameters
 #If you want to export your complete global environment then just write .export=ls(envir=globalenv()) and you will have it for better or worse.
-"biccal" <- function(b1,intp,y,knotsy,ymargin,delta,nxmargin,nmidk,n=para())
+"biccal" <- function(b1,intp,y,knotsy,ymargin,delta,nxmargin,nmidk,n=2)
 {
   doParallel::registerDoParallel(n)
 
   K <- length(knotsy[1,])
+  i = j = 0
 
   `%:%` <- foreach::`%:%`
   `%dopar%` <- foreach::`%dopar%`
@@ -397,7 +392,7 @@
 
 
 ### Knot addition
-"addition" <- function(y,K,lbound,ubound,ymargin,nxmargin,delta,n=para())
+"addition" <- function(y,K,lbound,ubound,ymargin,nxmargin,delta,n=2)
 {
   doParallel::registerDoParallel(n)
 
@@ -408,7 +403,7 @@
 
 
   ### Starting values
-  i <- 0
+  i = 0
 
   intpp <- intpar(y,knotsy)
   intp <- intpp$intp
@@ -549,6 +544,7 @@
 #' @param K number of initial number of knots
 #' @param nymargin desired length of the seqence
 #' @param log Does the logarithmic transformation apply to data? Default is TRUE.
+#' @param p A logical argument for plot
 #' @export
 #' @examples
 #' l <- 20
@@ -560,7 +556,7 @@
 #' x <- c(1:l)
 #' densityEst(y,x)
 
-"densityEst" <- function(y,x,ymargin,lbound,ubound,K,nymargin=1000,log=TRUE)
+"densityEst" <- function(y,x,ymargin,lbound,ubound,K,nymargin=1000,log=TRUE,p=TRUE)
 {
   if(missing(y))
     stop("You must provide y")
@@ -704,8 +700,25 @@
   #Original y values
   y <- lapply(1:nxmargin, function(X) exp(y[[X]]))
 
+  bestfit <- list()
+  bestfit$y <- y
+  bestfit$z <- z
+  bestfit$optp <- optp
+  bestfit$basisy <- basisy
+  bestfit$optimalknots <- optimalknots
+  bestfit$additionknots <- additionknots
+  bestfit$initialknots <- initialknots
+  bestfit$ymargin <- expymargin
+  bestfit$xmargin <- xmargin
+  bestfit$nymargin <- nymargin
+  bestfit$nxmargin <- nxmargin
+  bestfit$lowerbound <- exp(lbound)
+  bestfit$upperbound <- exp(ubound)
+  bestfit$delta <- delta
 
-  return(list(y=y,z=z,optp=optp,basisy=basisy,optimalknots=optimalknots,additionknots=additionknots,initialknots=initialknots,ymargin=expymargin,xmargin=xmargin,nymargin=nymargin,nxmargin=nxmargin,lowerbound=exp(lbound),upperbound=exp(ubound),delta=delta))
+  if(p)  plots(bestfit)
+
+  return(bestfit)
 }
 
 
