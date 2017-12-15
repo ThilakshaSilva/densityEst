@@ -8,5 +8,6 @@ This package considers the problem of estimating a time series of density functi
 You can install the development version from Github
 
 #install.packages("devtools")
+
 devtools::install_github("ThilakshaSilva/densityEst")
 
