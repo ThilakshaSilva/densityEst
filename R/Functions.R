@@ -6,13 +6,13 @@
   else { cubic <- function(y,t) { (y>t)*(y-t)*(y-t)*(y-t) } }
   terms[,1:length(t)] <- outer(y,t,FUN="cubic")
   bas <- terms%*%d
-  max <- max(bas)   #I divide the first and last two basis function by their maximum values to scale them to have values between [0,1]
+  max <- max(bas)   #Scale the basis functions
   bas <- bas/max
   return(list(bas=bas,max=max))
 }
 
 
-### Computing the maximum values of first and last two bases functions
+### Computing the maximum values of first and last two basis functions
 "maxbasiscal" <- function(y,knots)
 {
   K <- length(knots)
@@ -61,7 +61,7 @@
 }
 
 
-### First derivative of bases functions
+### First derivatives of basis functions
 "firstderbasis" <- function(y,t,d,e=TRUE)
 {
   terms <- matrix(NA,length(y),length(t))
@@ -83,7 +83,7 @@
 
 
   dbas <- matrix(NA,length(y),K-1)
-  ### Following basis functions are exactly same - gives 12 basis functions for 11 knots
+  ### Following basis functions are exactly the same - gives 12 basis functions for 11 knots
   #dbas[,2:(K-3)] <- dbasisgen(x,degree=3,interior.knots=knots[2:(K-1)],Boundary.knots=c(knots[1],knots[K]))[,3:(K+1-3)]
   dbas[,3:(K-3)] <- crs::gsl.bs(y,intercept=FALSE,knots=knots,nbreak=K,deriv=1)[,4:(K+1-3)]
 
@@ -130,7 +130,7 @@
 }
 
 
-### Second derivative of bases functions
+### Second derivative of basis functions
 "secondderbasis" <- function(y,t,d,e=TRUE)
 {
   terms <- matrix(NA,length(y),length(t))
@@ -152,7 +152,7 @@
 
 
   d2bas <- matrix(NA,length(y),K-1)
-  ### Following basis functions are exactly same - gives 12 basis functions for 11 knots
+  ### Following basis functions are exactly the same - 12 basis functions for 11 knots
   #d2bas[,2:(K-3)] <- d2basisgen(y,degree=3,interior.knots=knots[2:(K-1)],Boundary.knots=c(knots[1],knots[K]))[,3:(K+1-3)]
   d2bas[,3:(K-3)] <- crs::gsl.bs(y,intercept=FALSE,knots=knots,nbreak=K,deriv=2)[,4:(K+1-3)]
 
@@ -209,8 +209,8 @@
   z <- matrix(NA,length(y),K-1)
 
 
-  ### Following basis functions are exactly same - gives 7 basis functions for 11 knots
-  ### Remove first two bases functions and last three bases functions
+  ### Following basis functions are exactly the same - 7 basis functions for 11 knots
+  ### Remove first two basis functions and last three basis functions
   if((K-2) < 3)       #K < 5
     stop("At least 5 knots are needed")
   if((K-2) == 3)      #K = 5
@@ -267,7 +267,7 @@
 }
 
 
-### Maximum likelihood - maximize log density values
+### Maximum likelihood - maximise log density values
 "lik" <- function(intp,y,basisy,ymargin,delta)
 {
   zb <- basisy%*%intp
@@ -306,7 +306,7 @@
   ##########################################
   #fmidk <- (intk[1] + intk[2])/2
 
-  #Knots are calculated again in original scale
+  #Knots are calculated again in the original scale
   ###The spike of the second basis is always between first and second inner knots.
   ###Find the first mid knot which is between first and second inner knots. In the graph, this mid knot is in usually after the spike of the second basis.
   ###I find new 12 inner knots, after the first mid knot.
@@ -327,7 +327,7 @@
 }
 
 
-### Starting values - Initial parameters
+### Starting values / Initial parameters
 "intpar" <- function(y,knotsy)
 {
   #matplot(sort(unlist(y)),basiscaly(y,knotsy),type="l")
@@ -487,7 +487,7 @@
   bicfinal <- colMeans(bic$bic)
 
 
-  #At least 4 knots are needed in generating bases functions. So if there are at least 5 knots left, remove a knot.
+  #At least 4 knots are needed to generate the bases functions.
   deldif <- K-6
   for(e in 1:deldif)
   {
@@ -561,7 +561,7 @@
   {
     if(missing(ymargin))
     {
-      #lbound is the lower bound for the support for the density.
+      #lbound-lower bound for the support for the density
       if(!missing(lbound)){
         if (lbound <= 0)
           stop("lbound can only be a positive value")
@@ -574,7 +574,7 @@
           lbound <- log(min - range)
       }
 
-      #ubound is the upper bound for the support for the density.
+      #ubound-upper bound for the support for the density
       if(!missing(ubound)){
         if (ubound <= 0)
           stop("ubound can olny be a positive value")
@@ -587,7 +587,6 @@
       ymargin <- seq(lbound,ubound,length.out=nymargin)
 
     }else{
-      #lbound is the lower bound for the support for the density.
       if(!missing(lbound)){
         if (lbound <= 0)
           stop("lbound can only be a positive value")
@@ -600,7 +599,6 @@
           lbound <- log(min - range)
       }
 
-      #ubound is the upper bound for the support for the density.
       if(!missing(ubound)){
         if (ubound <= 0)
           stop("ubound can olny be a positive value")
@@ -620,13 +618,13 @@
       y <- lapply(1:nxmargin, function(X) log(sort(y[[X]])))
     }
   }else{
-    #lbound is the lower bound for the support for the density.
+    #lbound-lower bound for the support for the density
     if(missing(lbound)){
       range <- (max - min)/4
       lbound <- min - range
     }
 
-    #ubound is the upper bound for the support for the density.
+    #ubound-upper bound for the support for the density
     if(missing(ubound)){
       range <- (max - min)/4
       ubound <- max + range
@@ -636,10 +634,10 @@
   }
 
 
-  #K is the number of initial number of knots.
+  #K-initial number of knots
   if(missing(K)){
     avgssize <- round(length(unlist(y))/length(y))
-    K <- round(min(2*avgssize^(1/5),avgssize/4,25))     #K=14(12 inner initial knots + 2 bounday knots)
+    K <- round(min(2*avgssize^(1/5),avgssize/4,25))     #K=14(12 inner initial knots + 2 boundary knots)
   }
 
 
